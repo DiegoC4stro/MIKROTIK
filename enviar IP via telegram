@@ -1,0 +1,19 @@
+#############################################################################################
+#     ESTE SCRIPT TEM COMO FINALIZADE ENVIAR VIA BOT DO TELEGRAM O IP PUBLICO DO MIKROTIK   #
+#                              DIEGO CASTRO                                                 #
+#                            DC TEC SOLUTION                                                #
+#                         dctecsolution@gmail.com                                           #
+#############################################################################################
+
+!!!!!!!!!!!!!!!!!!ATENÇÃO USEM SEUS PROPRIOS BOT!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+/system script
+add dont-require-permissions=no name="IP POR TELEGRAM" owner=diego policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="ip cloud set ddns-enabled=yes ddns-update-int\
+    erval=00:01:00; \r\
+    \n\r\
+    \n#####DECLARANDO VARIAVEIS########\r\
+    \n:global myIP [ :put [ip cloud get public-address ] ]; \r\
+    \n:global nomedarb [/system identity get name];\r\
+    \n###REALIZANDO ENVIO######\r\
+    \ntool fetch url=\"COLE SEU TOKEN AQUI/sendMessage\?chat_id=CHATDOGRUPOAQUI&text=\$nomedarb \$myIP\" keep-result=no"
