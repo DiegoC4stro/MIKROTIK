@@ -1,0 +1,51 @@
+                #########################################
+                #Script desenvolvido por Diego Castro   #
+                #Contato: dctecsolution@gmail.com       #
+                #                                       #
+                #########################################
+
+
+
+O que o script faz?
+Assistir video:
+
+1= Será definido no menu de serviços que o ftp estara acessivel apartir 192.168.50.1, logo em seguida script de backup (.backup e .src).
+
+2= Será feito um acesso remoto via ftp em busca do arquivo "backupOCA_SJM.backup; scriptOCA_SJM;" e irá puxa-lo renomeando para 
+"backup.OCA_ACAI_SJM.backup e script.OCA_ACAI_SJM.rsc"o qual se tornará disponivel no menu "file" da RB matriz.
+
+3= Será reunido os arquivos que foram listados e então enviados. 
+    PS= função e-mail deve estar previamente habilitado e configurado em ( > tool e-mail ).
+
+
+
+1 =====================RODAR NA RB DO CLIENTE===================
+
+/ip service
+set ftp address=192.168.50.1/32
+
+/system script
+add dont-require-permissions=no name=DCTECSOLUTION owner=diego policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=\
+    "/system backup save name=backupOCA_SJM.backup; export file=scriptOCA_SJM;"
+
+2 =====================RODAR NA RB MATRIZ===================
+/system script
+add dont-require-permissions=no name=OCA_ACAI_SJM owner=diego policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/to\
+    ol fetch address=192.168.50.2 src-path=backupOCA_SJM.backup user=diego passw\
+    ord=xxxx mode=ftp dst-path=backup.OCA_ACAI_SJM.backup port=21\r\
+    \n/delay delay-time=5000ms;\r\
+    \n/tool fetch address=192.168.50.2 src-path=scriptOCA_SJM.rsc user=diego pas\
+    sword=xxxx mode=ftp dst-path=script.OCA_ACAI_SJM.rsc port=21\r\
+    \n"
+
+3 ==============ENVIO PARA EMAIL=========================
+/system script
+add dont-require-permissions=yes name="ENVIO BACKUPS EMAIL" owner=diego policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/tool e-mail send to=dctecsolution@gmail.com fi\
+    le=script.OCA_ACAI_SJM.rsc,backup.OCA_ACAI_SJM.backup  subject=BACKUP_CLIENTES"
+    
+========================================================
+E POR ULTIMO NÃO MENOS IMPORTANTE!!!
+
+AJUSTEM O FIREWALL PARA RESTRINGIR AINDA MAIS O ACESSO, GARANTINDO QUE APENAS A MATRIZ FAÇA ESSE ACESSO REMOTO VIA FTP.
